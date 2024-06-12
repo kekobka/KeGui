@@ -120,7 +120,10 @@ function PANEL:onRightClick()
 	self:setText(self:getPlaceholder())
 	self:onFinish()
 end
-
+function PANEL:setPlaceholder(t)
+	self:setText(t)
+	self.m_bPlaceholder = t
+end
 function PANEL:onFinish(text)
 end
 

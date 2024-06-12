@@ -6,11 +6,23 @@ accessorFunc(PANEL, "used", "Used", false)
 function PANEL:init()
 	self.lines = {}
 	self.offset = 0
+	self.maxh = 0
 	self:setSize(250, 6 + 18 * 5)
+	self.canvas = self.class.super.add(self, "panel")
+	self.canvas.paint = function()
+	end
+	local w, h = self:getSize()
+	self.canvas:setSize(w - KeGui.Style.ScrollbarSize, h)
 end
 
-function PANEL:addLine(text)
-	table.insert(self.lines, text)
+function PANEL:add(name)
+	local panel = self.canvas:add(name)
+	table.insert(self.lines, panel)
+	panel:setW(self:getW() - 4 - KeGui.Style.ScrollbarSize)
+	panel:setPos(2, 4 + self.maxh)
+	self.maxh = self.maxh + panel:getH() + 2
+	self.canvas:setH(self.maxh)
+	return panel
 end
 
 function PANEL:paint(x, y, w, h)
@@ -23,28 +35,6 @@ function PANEL:paint(x, y, w, h)
 
 	render.setColor(style.ChildBg)
 	render.drawRoundedBox(round, x + bsize, y + bsize, w - bsize * 2 - 1, h - bsize * 2 - 1)
-
-	render.setColor(style.Text)
-	render.setFont(KeGui.Fonts.main)
-	local lines = self.lines
-	for i = 1, self:getMax(), 1 do
-		local w = w - style.ScrollbarSize
-		local line = lines[self.offset + i]
-		if not line then
-			break
-		end
-
-		if self:itemIntersect(x + 6, y + (i - 1) * 20, w - 10, 20) then
-			if self.used then
-				render.setColor(style.HeaderActive)
-			else
-				render.setColor(style.HeaderHovered)
-			end
-			render.drawRectFast(x + 6, 5 + y + (i - 1) * 20, w - 12, 18)
-		end
-		render.setColor(style.Text)
-		render.drawSimpleText(x + 6, 5 + y + (i - 1) * 20, line, 0, 0)
-	end
 
 	local bsize = style.ScrollbarSize
 	local sround = style.ScrollbarRounding
@@ -60,7 +50,7 @@ function PANEL:paint(x, y, w, h)
 		render.setColor(style.ScrollbarGrab)
 	end
 
-	local off = self.offset / (#self.lines - self:getMax())
+	local off = self.offset / math.max(0, self.maxh - self:getH() + 4)
 
 	render.drawRoundedBox(round, x + w - bsize - 1, y + 3 + off * (h - 25), bsize - 3, 18)
 
@@ -87,19 +77,6 @@ function PANEL:onMouseReleased(x, y, key, keyName)
 		if self:cursorIntersect(x, y) then
 			if key == MOUSE.MOUSE1 then
 				self:doClick()
-				local lines = self.lines
-				for i = 1, self:getMax(), 1 do
-					local line = lines[self.offset + i]
-					if not line then
-						break
-					end
-					local x, y = self:getAbsolutePos()
-					if self:itemIntersect(x + 6, y + (i - 1) * 20, self:getW() - KeGui.Style.ScrollbarSize - 10, 20) then
-						self:onSelect(self.offset + i, line)
-						break
-					end
-
-				end
 			elseif key == MOUSE.MOUSE2 then
 				self:doRightClick()
 			end
@@ -113,7 +90,11 @@ function PANEL:onMouseReleased(x, y, key, keyName)
 end
 
 function PANEL:onMouseWheeled(x, y, delta)
-	self.offset = math.clamp(self.offset - delta * 2, 0, math.max(#self.lines - self:getMax(), 0))
+	self.offset = math.clamp(self.offset - delta * 10, 0, math.max(0, self.maxh - self:getH() + 4))
+	self:applyOffset()
+end
+function PANEL:performLayout(width, height)
+	self.canvas:setSize(width - KeGui.Style.ScrollbarSize, self.maxh)
 end
 
 function PANEL:onMouseMoved(x, y)
@@ -121,18 +102,10 @@ function PANEL:onMouseMoved(x, y)
 	local w, h = self:getSize()
 
 	y = math.clamp(y, 0, h) / h
-	self.offset = math.clamp(math.round(y * (#self.lines - self:getMax())), 0, math.max(#self.lines - self:getMax(), 0))
+	local s = self.maxh - h + 4
+	self.offset = math.clamp(y * s, 0, math.max(0, s))
+	self:applyOffset()
 
-end
-
-function PANEL:itemIntersect(aX, aY, w, h)
-	local x, y = KeGui.getCursor()
-	y = y - 5
-	if x >= aX and x < aX + w and y >= aY and y < aY + h then
-		return true
-	end
-
-	return false
 end
 
 function PANEL:scrollIntersect(aX, aY, w, h)
@@ -144,21 +117,29 @@ function PANEL:scrollIntersect(aX, aY, w, h)
 
 	return false
 end
-
-function PANEL:getMax()
-	return math.floor((self:getH() - 10) / 20)
-end
-
-function PANEL:setMax(n)
-	self:setH(10 + n * 20)
+function PANEL:applyOffset()
+	self.canvas:setY(-self.offset)
+	for i, v in ipairs(self.lines) do
+		if not v.visible and not v._scrolvis then
+			goto c
+		end
+		if (v:getY() + v:getH()) - self.offset < 0 then
+			v.visible = false
+			v._scrolvis = true
+		elseif v:getY() - self.offset > self:getH() then
+			v.visible = false
+			v._scrolvis = true
+		else
+			v.visible = true
+		end
+		::c::
+	end
 end
 
 function PANEL:doClick()
 end
 
 function PANEL:doRightClick()
-end
-function PANEL:onSelect(id, line)
 end
 
 function PANEL:_onUse(bool, x, y, key, keyName)
@@ -171,4 +152,4 @@ end
 function PANEL:onUse(bool)
 end
 
-KeGui.register("Scroll", PANEL, "Panel")
+KeGui.register("ScrollPanel", PANEL, "Panel")

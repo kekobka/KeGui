@@ -492,6 +492,9 @@ function PANEL:_onRender(X, Y, W, H, st)
 	local x, y = self:getAbsolutePos()
 	local w, h = self:getSize()
 	local dx, dy, dw, dh = max(x, X), max(y, Y), min(x + w, W), min(y + h, H)
+	if dx > dw or dy > dh then
+		return
+	end
 	if st then
 		render.enableScissorRect(dx, dy, dw, dh)
 	end
@@ -556,7 +559,6 @@ function PANEL:postChildPaint(x, y, w, h)
 end
 
 function PANEL:_onMouseMoved(x, y)
-
 
 	if self:cursorIntersect(x, y) then
 		if not self.enabled then

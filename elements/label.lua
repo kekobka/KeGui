@@ -43,7 +43,7 @@ function PANEL:setText(text)
 
 	render.setFont(self.font)
 	self._textWidth, self._textHeight = render.getTextSize(self.text)
-
+	self._textWidth = self._textWidth + KeGui.Style.FramePadding.x + 1
 	self:sizeToContents()
 	return self
 end

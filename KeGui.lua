@@ -33,12 +33,17 @@ do
 		local data = json.decode(fetch("https://api.github.com/repos/kekobka/KeGui/contents/styles"):await().body)
 		for k, style in ipairs(data) do
 			local name = string.match(style.name, "(%w+).lua$")
-			local str = fetch(style.download_url):await().body
-			KeGui.Styles[name] = loadstring(str)()
+			if notyKeGui.Styles[name] then
+				local str = fetch(style.download_url):await().body
+				KeGui.Styles[name] = loadstring(str)()
+			end
 		end
 	end
+
 	KeGui.static.registerStyleFromRepo = async * function(name)
-		if KeGui.Styles[name] then return end
+		if KeGui.Styles[name] then
+			return
+		end
 		local request = fetch("https://raw.githubusercontent.com/kekobka/KeGui/main/styles/" .. name .. ".lua"):await()
 		if request.code ~= 200 then
 			return throw(name .. " is not a style")
@@ -46,13 +51,15 @@ do
 		KeGui.Styles[name] = loadstring(request.body)()
 	end
 
+	function KeGui.static.registerStyle(name, style)
+		KeGui.Styles[name] = style
+	end
+
 	KeGui.static.setStyleFromRepo = async * function(name)
 		KeGui.static.registerStyleFromRepo(name):await()
 		KeGui.setStyle(name)
 	end
 
-	local __rawStyles = {}
-	local __rawStylesNormalized = {}
 	function KeGui.setStyle(name)
 
 		local style = KeGui.Styles[name]
@@ -62,31 +69,6 @@ do
 		KeGui.Style = style()
 		hook.run("KeGui.STYLE_CHANGED")
 	end
-
-	-- function KeGui.styleNameFix(name)
-	-- 	name = __rawStyles[name]
-	-- 	local ret = name[1]:upper()
-	-- 	for i = 2, #name, 1 do
-	-- 		if name[i]:upper() == name[i] then
-	-- 			ret = ret .. " " .. name[i]
-	-- 		else
-	-- 			ret = ret .. name[i]
-	-- 		end
-	-- 	end
-	-- 	return ret
-	-- end
-
-	-- function KeGui.styleNameNormalize(name)
-	-- 	return __rawStylesNormalized[name]
-	-- end
-
-	-- for path, data in pairs(styles) do
-	-- 	local name = string.match(path, "/(%w+).lua$")
-	-- 	local namelower = string.lower(name)
-	-- 	KeGui.Styles[namelower] = data
-	-- 	__rawStyles[namelower] = name
-	-- 	__rawStylesNormalized[KeGui.styleNameFix(namelower)] = namelower
-	-- end
 end
 
 KeGui.setStyle("classic")

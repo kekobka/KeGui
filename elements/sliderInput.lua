@@ -36,14 +36,22 @@ function PANEL:onMouseReleased(x, y, key, keyName)
 		self:onRightClick()
 		self:setUsed(false)
 		self.editing = false
-        hook.remove("StartChat", "KeGui.event_listener." .. self.address)
-        hook.remove("ChatTextChanged", "KeGui.event_listener." .. self.address)
-        hook.remove("FinishChat", "KeGui.event_listener." .. self.address)
-        hook.remove("PlayerChat", "KeGui.event_listener." .. self.address)
+		hook.remove("StartChat", "KeGui.event_listener." .. self.address)
+		hook.remove("ChatTextChanged", "KeGui.event_listener." .. self.address)
+		hook.remove("FinishChat", "KeGui.event_listener." .. self.address)
+		hook.remove("PlayerChat", "KeGui.event_listener." .. self.address)
 	elseif key == MOUSE.MOUSE1 and self:isUsed() then
 		self:doClick()
 		self:mouseCapture(false)
 		self:setUsed(false)
+		if self.editing then
+			self.editing = false
+			hook.remove("StartChat", "KeGui.event_listener." .. self.address)
+			hook.remove("ChatTextChanged", "KeGui.event_listener." .. self.address)
+			hook.remove("FinishChat", "KeGui.event_listener." .. self.address)
+			hook.remove("PlayerChat", "KeGui.event_listener." .. self.address)
+			return
+		end
 		if self._lastRelease < timer.curtime() - 0.5 then
 			self._lastRelease = timer.curtime()
 			return
@@ -117,6 +125,12 @@ function PANEL:_onFinish(text)
 	end
 	self:setText(text)
 	self:onFinish(text)
+end
+
+function PANEL:setText(text)
+	text = tonumber(text) or self:getPlaceholder()
+	self:setValue(math.remap(text, self:getMinValue(), self:getMaxValue(), 0, 1))
+	self.class.super.setText(self, text)
 end
 
 function PANEL:onFinish(text)

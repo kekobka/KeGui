@@ -3,10 +3,14 @@
 ---@include kegui.lua
 require("kegui.lua")
 ---@include tools/debug.lua
-require("tools/debug.lua")
-enableHud(player(), true)
+-- require("tools/debug.lua")
+---@include tools/skineditor.lua
+require("tools/skineditor.lua")
+--- @include styles/cherry.lua
 
-KeGui.static.setStyleFromRepo("cherry")
+enableHud(player(), true)
+-- KeGui.registerStyle("cherry", require("styles/cherry.lua"))
+KeGui.setStyleFromRepo("cherry")
 local panel = KeGui.new("Window")
 panel:setSize(1024, 1024)
 panel:center()
@@ -16,7 +20,14 @@ do
 	p:setPos(500, 500)
 	local p = panel:add("Window")
 	p:setSize(100, 100)
-	p:center(600, 500)
+	p:setPos(600, 500)
+
+	local p = panel:add("ScrollPanel")
+	p:setSize(100, 100)
+	p:setPos(600, 100)
+	for i = 1, 10, 1 do
+		p:add("Button"):setText("Button " .. i)
+	end
 end
 local pisun = panel:add("button")
 pisun:setPos(4, 28)
