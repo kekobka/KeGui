@@ -18,7 +18,6 @@ function PANEL:initialize()
 	self.visible = true
 	self.enabled = true
 	self.address = table_address(self)
-	self.m_benableScissor = true
 	self.canhovered = true
 end
 
@@ -482,7 +481,8 @@ function PANEL:_postEventToAllReverseThink()
 
 	return nil
 end
-
+local render_enableScissorRect = render.enableScissorRect
+local render_disableScissorRect = render.disableScissorRect
 local max, min = math.max, math.min
 function PANEL:_onRender(X, Y, W, H, st)
 	if not self.visible then
@@ -495,21 +495,13 @@ function PANEL:_onRender(X, Y, W, H, st)
 	if dx > dw or dy > dh then
 		return
 	end
-	if st then
-		render.enableScissorRect(dx, dy, dw, dh)
-	end
-	if self.paint then
-		self:paint(x, y, w, h)
-	end
-	if st then
-		render.disableScissorRect()
-	end
+
+	render_enableScissorRect(dx, dy, dw, dh)
+	self:paint(x, y, w, h)
+	render_disableScissorRect()
+
 	if self._firstChild then
-		if self._stensil then
-			self._firstChild:_postEventToAllReverseRender(x, y, x + w, y + h)
-		else
-			self._firstChild:_postEventToAllReverseRender(dx, dy, dw, dh)
-		end
+		self._firstChild:_postEventToAllReverseRender(dx, dy, dw, dh)
 	end
 	self:postChildPaint(x, y, w, h)
 end
