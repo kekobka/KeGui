@@ -5,8 +5,8 @@ require("kegui.lua")
 ---@include tools/debug.lua
 require("tools/debug.lua")
 enableHud(player(), true)
-KeGui.setStyle("Cherry")
 
+KeGui.static.setStyleFromRepo("cherry")
 local panel = KeGui.new("Window")
 panel:setSize(1024, 1024)
 panel:center()
@@ -59,7 +59,7 @@ function scroll:onSelect(id, line)
 end
 
 for k, v in sortedPairs(KeGui.Styles) do
-	scroll:addLine(KeGui.styleNameFix(k))
+	scroll:addLine(k)
 end
 
 local tree = panel:add("tree")
@@ -88,7 +88,7 @@ function scroll:onSelect(id, line)
 end
 
 for k, v in sortedPairs(KeGui.Styles) do
-	scroll:addLine(KeGui.styleNameFix(k))
+	scroll:addLine(k)
 end
 
 slider = tree2:addNode("slider")

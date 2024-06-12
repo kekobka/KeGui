@@ -4,6 +4,9 @@ end
 ---@include ./utils.lua
 require("./utils.lua")
 
+---@include libs/task.txt
+require("libs/task.txt")
+
 local ELEMENTS = {}
 
 ---@class KeGui
@@ -21,13 +24,37 @@ KeGui.EVENT = {
 	-- BUTTON_RELEASED = "KeGui.EVENT.BUTTON_RELEASED",
 }
 do
-	---@includedir styles
-	local styles = requiredir("styles")
+	--- @includedir styles
+	-- local styles = requiredir("styles")
+	---@include styles/classic.lua
 	KeGui.Styles = {}
+	KeGui.Styles.classic = require("styles/classic.lua")
+	KeGui.static.registerStylesFromRepo = async * function()
+		local data = json.decode(fetch("https://api.github.com/repos/kekobka/KeGui/contents/styles"):await().body)
+		for k, style in ipairs(data) do
+			local name = string.match(style.name, "(%w+).lua$")
+			local str = fetch(style.download_url):await().body
+			KeGui.Styles[name] = loadstring(str)()
+		end
+	end
+	KeGui.static.registerStyleFromRepo = async * function(name)
+		if KeGui.Styles[name] then return end
+		local request = fetch("https://raw.githubusercontent.com/kekobka/KeGui/main/styles/" .. name .. ".lua"):await()
+		if request.code ~= 200 then
+			return throw(name .. " is not a style")
+		end
+		KeGui.Styles[name] = loadstring(request.body)()
+	end
+
+	KeGui.static.setStyleFromRepo = async * function(name)
+		KeGui.static.registerStyleFromRepo(name):await()
+		KeGui.setStyle(name)
+	end
+
 	local __rawStyles = {}
 	local __rawStylesNormalized = {}
 	function KeGui.setStyle(name)
-		name = KeGui.styleNameNormalize(name) or name
+
 		local style = KeGui.Styles[name]
 		if not style then
 			return throw(name .. " is not style")
@@ -36,30 +63,30 @@ do
 		hook.run("KeGui.STYLE_CHANGED")
 	end
 
-	function KeGui.styleNameFix(name)
-		name = __rawStyles[name]
-		local ret = name[1]:upper()
-		for i = 2, #name, 1 do
-			if name[i]:upper() == name[i] then
-				ret = ret .. " " .. name[i]
-			else
-				ret = ret .. name[i]
-			end
-		end
-		return ret
-	end
+	-- function KeGui.styleNameFix(name)
+	-- 	name = __rawStyles[name]
+	-- 	local ret = name[1]:upper()
+	-- 	for i = 2, #name, 1 do
+	-- 		if name[i]:upper() == name[i] then
+	-- 			ret = ret .. " " .. name[i]
+	-- 		else
+	-- 			ret = ret .. name[i]
+	-- 		end
+	-- 	end
+	-- 	return ret
+	-- end
 
-	function KeGui.styleNameNormalize(name)
-		return __rawStylesNormalized[name]
-	end
+	-- function KeGui.styleNameNormalize(name)
+	-- 	return __rawStylesNormalized[name]
+	-- end
 
-	for path, data in pairs(styles) do
-		local name = string.match(path, "/(%w+).lua$")
-		local namelower = string.lower(name)
-		KeGui.Styles[namelower] = data
-		__rawStyles[namelower] = name
-		__rawStylesNormalized[KeGui.styleNameFix(namelower)] = namelower
-	end
+	-- for path, data in pairs(styles) do
+	-- 	local name = string.match(path, "/(%w+).lua$")
+	-- 	local namelower = string.lower(name)
+	-- 	KeGui.Styles[namelower] = data
+	-- 	__rawStyles[namelower] = name
+	-- 	__rawStylesNormalized[KeGui.styleNameFix(namelower)] = namelower
+	-- end
 end
 
 KeGui.setStyle("classic")
