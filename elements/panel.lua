@@ -100,10 +100,10 @@ function PANEL:invalidateLayoutRecursive()
 
 	local temp = self._firstChild
 
-	temp:invalidateLayout()
+	temp:invalidateLayoutRecursive()
 	while temp._nextSibling do
 		temp = temp._nextSibling
-		temp:invalidateLayout()
+		temp:invalidateLayoutRecursive()
 	end
 
 	self:invalidateLayout()
