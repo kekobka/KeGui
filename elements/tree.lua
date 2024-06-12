@@ -230,15 +230,12 @@ end
 
 function PANEL:calcHeight()
 	local size = 20
-	self:toAllChild(function(node)
-		if node == self.minmaxButton then
-			return
-		end
+	for k, node in ipairs(self.nodes) do
 		local h = node:getH()
 		node:setPos(22, size)
 		node:setW(self:getW() - 22)
 		size = size + h + 2
-	end)
+	end
 	return size
 end
 
