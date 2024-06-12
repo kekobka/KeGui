@@ -114,7 +114,7 @@ function PANEL:onMouseReleased(x, y, key, keyName)
 end
 
 function PANEL:onMouseWheeled(x, y, delta)
-	self.offset = math.clamp(self.offset - delta * 2, 0, #self.lines - self:getMax())
+	self.offset = math.clamp(self.offset - delta * 2, 0, math.max(#self.lines - self:getMax(), 0))
 end
 
 function PANEL:onMouseMoved(x, y)
@@ -122,7 +122,7 @@ function PANEL:onMouseMoved(x, y)
 	local w, h = self:getSize()
 
 	y = math.clamp(y, 0, h) / h
-	self.offset = math.clamp(math.round(y * (#self.lines - self:getMax())), 0, #self.lines - self:getMax())
+	self.offset = math.clamp(math.round(y * (#self.lines - self:getMax())), 0, math.max(#self.lines - self:getMax(), 0))
 
 end
 

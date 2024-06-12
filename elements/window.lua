@@ -1,3 +1,5 @@
+---@include panel.lua
+require("panel.lua")
 local render = render
 local PANEL = {}
 accessorFunc(PANEL, "m_btitle", "Title", "Title")
