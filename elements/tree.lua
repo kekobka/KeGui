@@ -3,6 +3,7 @@ require("panel.lua")
 local render = render
 local PANEL = {}
 accessorFunc(PANEL, "m_btitle", "Title", "Tree")
+accessorFunc(PANEL, "m_bDrawBG", "DrawBG", false)
 
 function PANEL:init()
 
@@ -104,9 +105,10 @@ function PANEL:paint(x, y, w, h)
 	local round = style.WindowRounding
 	self:paintBorder(x, y, w, 18, round)
 
-	-- render.setColor(style.WindowBg)
-	-- render.drawRoundedBox(round, x + bsize, y + bsize, w - bsize * 2 - 1, h - bsize * 2 - 1)
-
+	if self.m_bDrawBG then
+		render.setColor(style.WindowBg)
+		render.drawRoundedBox(round, x + bsize, y + bsize, w - bsize * 2 - 1, h - bsize * 2 - 1)
+	end
 	if self.used then
 		render.setColor(style.HeaderActive)
 	elseif self.hovered then

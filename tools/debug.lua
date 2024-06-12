@@ -3,13 +3,12 @@ require("../kegui.lua")
 ---TODO
 -- 
 
-local menu = KeGui.new("Window")
-menu:setTitle("Debug tool")
-menu:setSizable(false)
 local x, y = render.getResolution()
-local tree = menu:add("tree")
-tree:setPos(4, 28)
+local tree = KeGui.new("tree")
+
 tree:setTitle("DEBUG")
+tree:setDrawBG(true)
+
 local renderTree, eventsTree
 local last
 local function recursive(tree, prev)
@@ -58,8 +57,7 @@ local function resolveHook(label, hookName, ...)
 	eventsTree:sizeToAllChildren(true, true)
 	tree:sizeToAllChildren(true, true)
 	tree:align()
-	menu:sizeToAllChildren(true, true)
-	menu:setX(x - menu:getW())
+	tree:setX(x - tree:getW())
 end
 local i = 0
 for k, v in pairs(KeGui.EVENT) do
@@ -78,5 +76,4 @@ renderTree:setTitle("Render")
 hook.add(KeGui.EVENT.HOVERED, "render.tree", biba)
 
 tree:expandAll()
-menu:sizeToAllChildren(true, true)
-menu:setX(x - menu:getW())
+tree:setX(x - tree:getW())
