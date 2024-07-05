@@ -1,3 +1,6 @@
+if SERVER then
+	return
+end
 ---@include panel.lua
 require("panel.lua")
 local PANEL = {}

@@ -1,3 +1,6 @@
+if SERVER then
+	return
+end
 ---@include Panel.lua
 require("Panel.lua")
 ---@include sliderInput.lua

@@ -1,6 +1,13 @@
 if KeGui then
 	return
 end
+if SERVER then
+	KeGui = {}
+end
+if player() ~= owner() then
+	KeGui = {}
+	return
+end
 ---@include ./utils.lua
 require("./utils.lua")
 

@@ -1,3 +1,6 @@
+if SERVER then
+	return
+end
 ---@include input.lua
 require("input.lua")
 local min = math.min
@@ -8,7 +11,7 @@ accessorFunc(PANEL, "m_bValue", "Value", 0.5)
 accessorFunc(PANEL, "m_bPlaceholder", "Placeholder", 0)
 accessorFunc(PANEL, "m_bMinValue", "MinValue", 0)
 accessorFunc(PANEL, "m_bMaxValue", "MaxValue", 1)
-accessorFunc(PANEL, "m_bMaxInput", "MaxInput", -1)
+accessorFunc(PANEL, "m_bMaxInput", "MaxInput", 0)
 accessorFunc(PANEL, "m_bRound", "Round", false)
 
 function PANEL:init()
@@ -62,9 +65,6 @@ function PANEL:onMouseReleased(x, y, key, keyName)
 		hook.add("StartChat", "KeGui.event_listener." .. address, function(key, keyName)
 			self.startchat = true
 			hook.add("ChatTextChanged", "KeGui.event_listener." .. address, function(text)
-				if self:getMaxInput() > 0 then
-					text = string.sub(text, 1, self:getMaxInput())
-				end
 
 				text = tonumber(text) or self:getPlaceholder()
 				self:setText(math.clamp(text, self:getMinValue(), self:getMaxValue()))
@@ -119,11 +119,17 @@ function PANEL:onMouseMoved(x, y)
 	end
 end
 
+function PANEL:onRightClick()
+	self:_onFinish(self:getPlaceholder())
+end
+
 function PANEL:_onFinish(text)
+	text = tonumber(text) or self:getPlaceholder()
 	if self:getRound() then
 		text = math.round(text)
 	end
-	self:setText(text)
+
+	self:setText(math.clamp(text, self:getMinValue(), self:getMaxValue()))
 	self:onFinish(text)
 end
 

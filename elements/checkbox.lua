@@ -1,3 +1,6 @@
+if SERVER then
+	return
+end
 ---@include button.lua
 require("button.lua")
 

@@ -1,3 +1,6 @@
+if SERVER then
+	return
+end
 ---@include panel.lua
 require("panel.lua")
 local render = render
@@ -43,7 +46,6 @@ function PANEL:setText(text)
 
 	render.setFont(self.font)
 	self._textWidth, self._textHeight = render.getTextSize(self.text)
-	self._textWidth = self._textWidth + KeGui.Style.FramePadding.x + 1
 	self:sizeToContents()
 	return self
 end
@@ -71,7 +73,7 @@ function PANEL:sizeToContents()
 end
 
 function PANEL:getTextSize()
-	return self._textWidth, self._textHeight
+	return self._textWidth + 2 * KeGui.Style.FramePadding.x, self._textHeight
 end
 
 function PANEL:doClick()

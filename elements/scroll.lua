@@ -1,3 +1,6 @@
+if SERVER then
+	return
+end
 ---@include panel.lua
 require("panel.lua")
 local PANEL = {}
@@ -11,6 +14,14 @@ end
 
 function PANEL:addLine(text)
 	table.insert(self.lines, text)
+end
+
+function PANEL:removeLine(id)
+	table.remove(self.lines, id)
+end
+
+function PANEL:getLines()
+	return self.lines
 end
 
 function PANEL:paint(x, y, w, h)

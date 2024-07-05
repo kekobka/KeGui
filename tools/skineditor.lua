@@ -7,12 +7,61 @@ window:setSizable(false)
 
 local scroll = window:add("ScrollPanel")
 
-local i = 1
-for k, v in pairs(KeGui.Style) do
-	if not istable(v) or not v.a then
-		goto c
-	end
-
+for i, k in ipairs({
+	"Text",
+	"TextDisabled",
+	"WindowBg",
+	"ChildBg",
+	"PopupBg",
+	"Border",
+	"BorderShadow",
+	"FrameBg",
+	"FrameBgHovered",
+	"FrameBgActive",
+	"TitleBg",
+	"TitleBgActive",
+	"TitleBgCollapsed",
+	"MenuBarBg",
+	"ScrollbarBg",
+	"ScrollbarGrab",
+	"ScrollbarGrabHovered",
+	"ScrollbarGrabActive",
+	"CheckMark",
+	"SliderGrab",
+	"SliderGrabActive",
+	"Button",
+	"ButtonHovered",
+	"ButtonActive",
+	"Header",
+	"HeaderHovered",
+	"HeaderActive",
+	"Separator",
+	"SeparatorHovered",
+	"SeparatorActive",
+	"ResizeGrip",
+	"ResizeGripHovered",
+	"ResizeGripActive",
+	"Tab",
+	"TabHovered",
+	"TabActive",
+	"TabUnfocused",
+	"TabUnfocusedActive",
+	"PlotLines",
+	"PlotLinesHovered",
+	"PlotHistogram",
+	"PlotHistogramHovered",
+	"TableHeaderBg",
+	"TableBorderStrong",
+	"TableBorderLight",
+	"TableRowBg",
+	"TableRowBgAlt",
+	"TextSelectedBg",
+	"DragDropTarget",
+	"NavHighlight",
+	"NavWindowingHighlight",
+	"NavWindowingDimBg",
+	"ModalWindowDimBg",
+}) do
 	local i1 = scroll:add("ColorEdit4")
 
 	local i2 = i1:add("Label")
@@ -25,8 +74,6 @@ for k, v in pairs(KeGui.Style) do
 	function i1:performLayout(width, height)
 		self:setColor(KeGui.Style[k])
 	end
-	i = i + 1
-	::c::
 end
 
 scroll:setPos(4, 24)

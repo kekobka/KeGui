@@ -1,3 +1,6 @@
+if SERVER then
+	return
+end
 local PANEL = {}
 accessorFunc(PANEL, "_X", "X", 0)
 accessorFunc(PANEL, "_Y", "Y", 0)
