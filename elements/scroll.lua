@@ -19,6 +19,9 @@ end
 function PANEL:removeLine(id)
 	table.remove(self.lines, id)
 end
+function PANEL:clear()
+	self.lines = {}
+end
 
 function PANEL:getLines()
 	return self.lines
