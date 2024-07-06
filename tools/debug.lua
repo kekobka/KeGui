@@ -1,7 +1,10 @@
+if SERVER then
+	return
+end
 ---@include ../kegui.lua
 require("../kegui.lua")
----TODO
--- 
+
+
 
 local x, y = render.getResolution()
 local tree = KeGui.new("tree")
@@ -17,7 +20,7 @@ local function recursive(tree, prev)
 	end
 	if prev._firstChild then
 		local newtree = tree:addNode("Tree")
-		newtree:setTitle(tostring(prev))
+		newtree:setTitle(tostring(prev):sub(7))
 		prev:toAllChild(function(next)
 			recursive(newtree, next)
 			if next._firstChild then
@@ -25,7 +28,7 @@ local function recursive(tree, prev)
 		end)
 		newtree:maximize()
 	else
-		tree:addNode("Label"):setText(prev)
+		tree:addNode("Label"):setText(tostring(prev):sub(7))
 	end
 end
 
