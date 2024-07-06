@@ -8,6 +8,7 @@ accessorFunc(PANEL, "used", "Used", false)
 
 function PANEL:init()
 	self.lines = {}
+	self.selected = nil
 	self.offset = 0
 	self:setSize(250, 6 + 18 * 5)
 end
@@ -17,10 +18,15 @@ function PANEL:addLine(text)
 end
 
 function PANEL:removeLine(id)
-	table.remove(self.lines, id)
+	local r = table.remove(self.lines, id)
+	if self.selected == r then
+		self.selected = nil
+	end
+
 end
 function PANEL:clear()
 	self.lines = {}
+	self.selected = nil
 end
 
 function PANEL:getLines()
@@ -47,8 +53,7 @@ function PANEL:paint(x, y, w, h)
 		if not line then
 			break
 		end
-
-		if self:itemIntersect(x + 6, y + (i - 1) * 20, w - 10, 20) then
+		if self.selected == line or self:itemIntersect(x + 6, y + (i - 1) * 20, w - 10, 20) then
 			if self.used then
 				render.setColor(style.HeaderActive)
 			else
@@ -109,6 +114,7 @@ function PANEL:onMouseReleased(x, y, key, keyName)
 					end
 					local x, y = self:getAbsolutePos()
 					if self:itemIntersect(x + 6, y + (i - 1) * 20, self:getW() - KeGui.Style.ScrollbarSize - 10, 20) then
+						self.selected = line
 						self:onSelect(self.offset + i, line)
 						break
 					end
