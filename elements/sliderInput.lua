@@ -62,6 +62,7 @@ function PANEL:onMouseReleased(x, y, key, keyName)
 		self._lastRelease = timer.curtime()
 		local address = self.address
 		self.editing = true
+		notification.addLegacy("Open Chat", NOTIFY.HINT, 2)
 		hook.add("StartChat", "KeGui.event_listener." .. address, function(key, keyName)
 			self.startchat = true
 			hook.add("ChatTextChanged", "KeGui.event_listener." .. address, function(text)

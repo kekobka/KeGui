@@ -75,6 +75,7 @@ function PANEL:onMouseReleased(x, y, key, keyName)
 	elseif key == MOUSE.MOUSE1 and self:isUsed() then
 		self:doClick()
 		local address = self.address
+		notification.addLegacy("Open Chat", NOTIFY.HINT, 2)
 		hook.add("StartChat", "KeGui.event_listener." .. address, function(key, keyName)
 			self.editing = true
 			hook.add("ChatTextChanged", "KeGui.event_listener." .. address, function(text)
