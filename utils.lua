@@ -132,3 +132,34 @@ function render.drawRoundedBoxOutlined(r, x, y, w, h, t, clr)
 	render_drawRoundedBox(r, x, y, w, h)
 	render_setStencilEnable(false)
 end
+
+local meshBegin = mesh.generate
+local meshEnd = mesh.End
+local meshPosition = mesh.writePosition
+local meshColor = mesh.writeColor
+local meshAdvanceVertex = mesh.advanceVertex
+
+local mat_ignorez = material.load("color_ignorez")
+
+function render.drawGradientLine(startX, startY, endX, endY, startColor, endColor)
+	if endColor == nil then
+		endColor = startColor
+	end
+
+	render.setMaterial(mat_ignorez)
+
+	meshBegin(nil, 1, 1, function()
+		meshColor(startColor.r, startColor.g, startColor.b, startColor.a)
+
+		meshPosition(Vector(startX, startY, 0))
+
+		meshAdvanceVertex()
+
+		meshColor(endColor.r, endColor.g, endColor.b, endColor.a)
+
+		meshPosition(Vector(endX, endY, 0))
+
+		meshAdvanceVertex()
+	end)
+
+end

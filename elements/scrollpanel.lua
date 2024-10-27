@@ -7,6 +7,7 @@ local PANEL = {}
 accessorFunc(PANEL, "used", "Used", false)
 
 function PANEL:init()
+	self:setWheelEnabled(true)
 	self.lines = {}
 	self.offset = 0
 	self.maxh = 0
@@ -21,9 +22,9 @@ end
 function PANEL:add(name)
 	local panel = self.canvas:add(name)
 	table.insert(self.lines, panel)
-	panel:setW(self:getW() - 4 - KeGui.Style.ScrollbarSize)
-	panel:setPos(2, 4 + self.maxh)
-	self.maxh = self.maxh + panel:getH() + 2
+	panel:setW(self:getW() - 3 - KeGui.Style.ScrollbarSize)
+	panel:setPos(2, 2 + self.maxh)
+	self.maxh = self.maxh + panel:getH()
 	self.canvas:setH(self.maxh)
 	return panel
 end
@@ -105,7 +106,7 @@ function PANEL:onMouseMoved(x, y)
 	local w, h = self:getSize()
 
 	y = math.clamp(y, 0, h) / h
-	local s = self.maxh - h + 4
+	local s = self.maxh - h + 2
 	self.offset = math.clamp(y * s, 0, math.max(0, s))
 	self:applyOffset()
 

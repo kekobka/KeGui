@@ -55,6 +55,12 @@ end
 function PANEL:toggle()
 	self:setChecked(not self:getChecked())
 end
+
+function PANEL:toggle()
+	self:setChecked(not self:getChecked())
+	self:onChanged(self:getChecked())
+end
+
 function PANEL:sizeToContents()
 	local w, h = self:getTextSize()
 	self:setSize(w + 22 + 3, h + 4)
@@ -73,6 +79,9 @@ function PANEL:onMouseReleased(x, y, key, keyName)
 		end
 		self.used = false
 	end
+end
+
+function PANEL:onChanged(state)
 end
 
 KeGui.register("Checkbox", PANEL, "Label")

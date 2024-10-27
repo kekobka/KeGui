@@ -129,9 +129,9 @@ function PANEL:_onFinish(text)
 	if self:getRound() then
 		text = math.round(text)
 	end
-
-	self:setText(math.clamp(text, self:getMinValue(), self:getMaxValue()))
-	self:onFinish(text)
+	if self:onFinish(text) ~= false then
+		self:setText(math.clamp(text, self:getMinValue(), self:getMaxValue()))
+	end
 end
 
 function PANEL:setText(text)

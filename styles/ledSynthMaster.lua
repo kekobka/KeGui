@@ -1,5 +1,37 @@
 return function()
-	local style = KeGui.Styles.light()
+	local style = {}
+
+	style.Alpha = 1.0
+	style.DisabledAlpha = 0.6000000238418579
+	style.WindowPadding = ImVec2(8.0, 8.0)
+	style.WindowRounding = 0.0
+	style.WindowBorderSize = 1.0
+	style.WindowMinSize = ImVec2(32.0, 32.0)
+	style.WindowTitleAlign = ImVec2(0.0, 0.5)
+	style.WindowMenuButtonPosition = KeGuiDir_Left
+	style.ChildRounding = 0.0
+	style.ChildBorderSize = 1.0
+	style.PopupRounding = 0.0
+	style.PopupBorderSize = 1.0
+	style.FramePadding = ImVec2(4.0, 3.0)
+	style.FrameRounding = 0.0
+	style.FrameBorderSize = 0.0
+	style.ItemSpacing = ImVec2(8.0, 4.0)
+	style.ItemInnerSpacing = ImVec2(4.0, 4.0)
+	style.CellPadding = ImVec2(4.0, 2.0)
+	style.IndentSpacing = 21.0
+	style.ColumnsMinSpacing = 6.0
+	style.ScrollbarSize = 14.0
+	style.ScrollbarRounding = 9.0
+	style.GrabMinSize = 10.0
+	style.GrabRounding = 0.0
+	style.TabRounding = 4.0
+	style.TabBorderSize = 0.0
+	style.TabMinWidthForCloseButton = 0.0
+	style.ColorButtonPosition = KeGuiDir_Right;
+	style.ButtonTextAlign = ImVec2(0.5, 0.5)
+	style.SelectableTextAlign = ImVec2(0.0, 0.0)
+
 	style["Text"] = ImVec4(0.40, 0.39, 0.38, 1.00)
 	style["TextDisabled"] = ImVec4(0.40, 0.39, 0.38, 0.77)
 	style["WindowBg"] = ImVec4(0.92, 0.91, 0.88, 0.70)
@@ -43,5 +75,6 @@ return function()
 	style["PlotHistogramHovered"] = ImVec4(0.25, 1.00, 0.00, 1.00)
 	style["TextSelectedBg"] = ImVec4(0.25, 1.00, 0.00, 0.43)
 	style["ModalWindowDarkening"] = ImVec4(1.00, 0.98, 0.95, 0.73)
+
 	return style
 end

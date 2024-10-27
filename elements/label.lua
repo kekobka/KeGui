@@ -73,7 +73,7 @@ function PANEL:sizeToContents()
 end
 
 function PANEL:getTextSize()
-	return self._textWidth + 2 * KeGui.Style.FramePadding.x, self._textHeight
+	return self._textWidth + KeGui.Style.FramePadding.x, self._textHeight
 end
 
 function PANEL:doClick()

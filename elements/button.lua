@@ -44,7 +44,7 @@ function PANEL:paint(x, y, w, h)
 		render.setColor(style.Text)
 	end
 
-	x = x + (self.alignX == 1 and w / 2 or style.FramePadding.x)
+	x = x + (self.alignX == 1 and w / 2 or (style.FramePadding.x / 2))
 	y = y + (self.alignY == 1 and h / 2 or 1)
 
 	render.setFont(self.font)

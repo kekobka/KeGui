@@ -5,7 +5,7 @@ require("kegui.lua")
 ---@include tools/debug.lua
 -- require("tools/debug.lua")
 ---@include tools/skineditor.lua
-require("tools/skineditor.lua")
+-- require("tools/skineditor.lua")
 --- @include styles/cherry.lua
 
 enableHud(player(), true)
@@ -71,6 +71,15 @@ end
 
 for k, v in sortedPairs(KeGui.Styles) do
 	scroll:addLine(k)
+end
+
+local rendertarget = panel:add("Render")
+rendertarget:setPos(512 + 250, 28 * 6 + 4 + scroll:getH())
+rendertarget:setSize(256, 256)
+rendertarget:setFPS(144)
+rendertarget:setRes(512, 512)
+function rendertarget:render(w, h)
+	render.drawRect(math.random(1, w - 2), math.random(1, h - 2), 2, 2)
 end
 
 local tree = panel:add("tree")

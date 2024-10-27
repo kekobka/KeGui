@@ -94,6 +94,9 @@ function PANEL:setSizable(b)
 	self.m_bSizable = b
 	self.sizeButton.visible = b
 end
+function PANEL:setMinimize(b)
+	self.minmaxButton.visible = b
+end
 
 function PANEL:cursorIntersectHovered(x, y)
 	local x, y = self:screenToLocal(x, y)
@@ -121,7 +124,9 @@ function PANEL:performLayout(w, h)
 	if pos == KeGuiDir_Left then
 		self.minmaxButton:setPos(KeGui.Style.FramePadding.x / 2, 0)
 	elseif pos == KeGuiDir_Right then
-		self.minmaxButton:setPos(w - 24 - 4 - KeGui.Style.FramePadding.x / 2, 0)
+		timer.simple(0, function()
+			self.minmaxButton:setPos(w - 24 - 4 - KeGui.Style.FramePadding.x / 2, 0)
+		end)
 	else
 		self.minmaxButton:setPos(-100, -100)
 	end
@@ -144,10 +149,10 @@ end
 function PANEL:minimize()
 	self._maximized = false
 	self._minimaxH = self:getH()
-	
+
 	self:setSize(self:getW(), 24)
 	self.minmaxButton:setText("►")
-	
+
 	local address = self.address .. "minimax"
 	self:toAllChild(function(child)
 		if child == self.minmaxButton or child == self.closeButton then

@@ -22,6 +22,7 @@ function PANEL:initialize()
 	self.enabled = true
 	self.address = table_address(self)
 	self.canhovered = true
+	self.wheelEnabled = false
 end
 
 local ___t = {}
@@ -222,15 +223,20 @@ function PANEL:add(name)
 
 end
 function PANEL:remove()
+	self.removed = true
 	local parent = self:getParent()
 	if not self._prevSibling then
+		if self._nextSibling then
+			parent._firstChild = self._nextSibling
+			self._nextSibling._prevSibling = nil
+			return
+		end
 		parent._firstChild = nil
 		return
 	end
 
 	local prev = self._prevSibling
 	local next = self._nextSibling
-
 	prev._nextSibling = next
 	if next then
 		next._prevSibling = prev
@@ -275,6 +281,10 @@ end
 
 function PANEL:enable()
 	self.enabled = true
+end
+
+function PANEL:setWheelEnabled(w)
+	self.wheelEnabled = w
 end
 
 function PANEL:isCaptured()
@@ -636,7 +646,7 @@ end
 function PANEL:_onMouseWheeled(x, y, delta)
 
 	if self:cursorIntersect(x, y) then
-		if not self.enabled then
+		if not self.enabled or not self.wheelEnabled then
 			return self:_postEventToAll(EVENT.MOUSE_WHEELED, x, y, delta)
 		end
 

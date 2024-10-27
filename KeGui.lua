@@ -8,6 +8,7 @@ if player() ~= owner() then
 	KeGui = {}
 	return
 end
+enableHud(player(), true)
 ---@include ./utils.lua
 require("./utils.lua")
 
@@ -36,6 +37,7 @@ do
 	---@include styles/classic.lua
 	KeGui.Styles = {}
 	KeGui.Styles.classic = require("styles/classic.lua")
+	KeGui.static.StyleName = "classic"
 	KeGui.static.registerStylesFromRepo = async * function()
 		local data = json.decode(fetch("https://api.github.com/repos/kekobka/KeGui/contents/styles"):await().body)
 		for k, style in ipairs(data) do
@@ -63,22 +65,34 @@ do
 	end
 
 	KeGui.static.setStyleFromRepo = async * function(name)
+		name = string.trim(name)
 		KeGui.static.registerStyleFromRepo(name):await()
 		KeGui.setStyle(name)
 	end
 
-	function KeGui.setStyle(name)
+	function KeGui.setStyle(name, hidden)
 
 		local style = KeGui.Styles[name]
 		if not style then
 			return throw(name .. " is not style")
 		end
 		KeGui.Style = style()
+		KeGui.static.StyleName = name
+		hook.run("KeGui.PRE_STYLE_CHANGED")
 		hook.run("KeGui.STYLE_CHANGED")
+		hook.run("KeGui.POST_STYLE_CHANGED")
+		if not hidden then
+			KeGui.hint("Set style: " .. name)
+		end
+	end
+	function KeGui.hint(txt)
+		if CLIENT and hasPermission("notification") then
+			notification.addLegacy("[KeGui] " .. txt, NOTIFY.HINT, 3)
+		end
 	end
 end
 
-KeGui.setStyle("classic")
+KeGui.setStyle("classic", true)
 
 local string_lower = string.lower
 local string_match = string.match
@@ -177,6 +191,14 @@ KeGui.Fonts = FONTS
 KeGui.static.setVisible = function(bool)
 	root.visible = bool
 end
+function KeGui.static.Clear()
+	local _oldroot = root
+	root = ELEMENTS.root()
+	KeGui.static.root = root
+	root.visible = _oldroot.visible
+	_resx, _resy = render.getGameResolution()
+	root:setSize(_resx, _resy)
+end
 local function render()
 	if not root.visible then
 		return
@@ -193,6 +215,19 @@ hook.add("KeGui.STYLE_CHANGED", "KeGui.STYLE_CHANGED", function()
 	root:invalidateLayoutRecursive()
 end)
 hook.add("PostDrawHud", "KeGui.PostDrawHud." .. KeGui.root.address, paint)
+
+hook.add("PlayerChat", "KeGui.Secret.Style" .. KeGui.root.address, function(ply, text)
+	if ply ~= owner() then
+		return
+	end
+	if string.sub(text, 1, 7) == "!kstyle" then
+		KeGui.setStyleFromRepo(string.sub(text, 8))
+	end
+	if string.sub(text, 1, 7) == "!kclear" then
+		KeGui.Clear()
+	end
+end)
+
 local _lastMouseX, _lastMouseY = 0, 0
 local huge = math.huge
 local hook_run = hook.run

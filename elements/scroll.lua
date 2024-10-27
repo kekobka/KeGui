@@ -7,6 +7,7 @@ local PANEL = {}
 accessorFunc(PANEL, "used", "Used", false)
 
 function PANEL:init()
+	self:setWheelEnabled(true)
 	self.lines = {}
 	self.selected = nil
 	self.offset = 0
